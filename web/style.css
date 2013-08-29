@@ -1,0 +1,68 @@
+body {
+	margin: 0;
+	
+	background: #fff;
+}
+
+#wrapper {
+	background: #ddd;
+	position:absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 90%;
+	
+}
+
+	#wrapper #logo {
+		position: absolute;
+		font: bold 100px/80px Arial, Tahoma, Verdana;
+		top: 50%;
+		left: 50%;
+		margin-top: -58px;
+		margin-left: -70px;
+	}
+	
+		#wrapper #logo div {
+			font: bold 37px/36px Arial, Tahoma, Verdana;
+			margin-left: 6px;
+		}
+	
+	#wrapper #link_holder {
+		position: absolute;
+		width: 100%;
+		top: 50%;
+		height: 30px;
+		text-align: center;
+	}
+	
+		#wrapper #link_holder a, #wrapper #link_holder a:hover, #wrapper #link_holder a:visited, #wrapper #link_holder a:active, #wrapper #link_holder a:focus {
+			background: #fff;
+			color: #000;
+			font: bold 15px Tahoma, Arial, Verdana;
+			text-decoration: none;
+			padding: 5px;
+			visibility: hidden;
+			opacity: 0;
+		}
+
+#footer {
+	background: #fff;
+	position:absolute;
+	bottom: 0;
+	height: 10%;
+	width: 100%;
+	min-height: 100px;
+}
+
+	#footer #arrow {
+		color: #ddd;
+		font: bold 60px/38px Arial, Tahoma, Verdana;
+		text-align: center;
+	}
+	
+	#footer #sharing {
+		margin-top: 10px;
+		text-align: center;
+		font: bold 12px/22px Tahoma, Arial, Verdana;
+	}
