@@ -49,6 +49,7 @@ func (s *Server) Listen() {
 		client := NewClient(ws, s.races[raceid])
     s.races[raceid].Add(client)
     log.Println("Client",client.id,"connected to race",raceid)
+    client.Write(&Message{"text",s.races[raceid].txt})
 		client.Listen()
 	}
 	http.Handle(s.pattern, websocket.Handler(onConnected))

@@ -44,6 +44,7 @@ func (c *Client) listenWrite() {
 		select {
 		case msg := <-c.ch:
 			websocket.JSON.Send(c.ws, msg)
+      log.Println("sending to",c.id,":",msg)
 		}
 	}
 }
@@ -55,8 +56,9 @@ func (c *Client) listenRead() {
 			var msg Message
 			err := websocket.JSON.Receive(c.ws, &msg)
 			if err != nil {
-				log.Println("error", err)
+				log.Println(c.id,"error", err)
 			}
+      log.Println(c.id,"got:",msg)
 			c.race.SendAll(&msg)
 		}
 	}
