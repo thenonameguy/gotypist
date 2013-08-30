@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/race", RaceHandler)
 	http.Handle("/socket", websocket.Handler(SocketServer))
   serveSingle("/scripts.js","web/scripts.js")
+  serveSingle("/scripts2.js","web/scripts2.js")
   serveSingle("/style.css","web/style.css")
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
