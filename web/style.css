@@ -93,6 +93,7 @@ body {
 		
 		#wrapper #feed-wrapper #typer-input {
 			font: bold 30px/60px Georgia, 'Times New Roman';
+      padding:0;
 			background: none;
 			text-align: left;
 			width: 70%;
