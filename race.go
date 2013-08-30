@@ -2,26 +2,32 @@ package main
 
 import(
   "html/template"
-  "io/ioutil"
   "net/http"
   "errors"
   "log"
+  "io/ioutil"
+  "math/rand"
 )
 
-func ChooseText() string{
-  files,err:=ioutil.ReadDir("web")
+func chooseText() string{
+  files,_:=ioutil.ReadDir("txts")
+  content,err:=ioutil.ReadFile("txts/"+files[rand.Int31n(int32(len(files)))].Name())
   if err!=nil{
-    log.Println("Couldn't access directory:",err)
-    return ""
+    log.Println("txt error",err)
   }
-  for _,v:=range files{
-    log.Println(v)
-  }
-  return "lel"
+  return string(content)
 }
 
+func getRaceID(r *http.Request) (string,error){
+  if raceid:=r.FormValue("id");raceid=="" {
+    return "",errors.New("race: no id got from GET request")
+  } else{
+    return raceid,nil
+  }
+}
 func RaceHandler(w http.ResponseWriter,r *http.Request){
   raceid,err:=getRaceID(r)
+  _=raceid
   if err!=nil{
     log.Println(err)
     w.Write([]byte("Race 404'd, go back"))
@@ -31,7 +37,5 @@ func RaceHandler(w http.ResponseWriter,r *http.Request){
   if err!=nil{
     log.Fatal("Failed to parse file:",err)
   }
-  racer:=Join(raceid)
-  log.Println(len(races[raceid].Racers),racer)
-  t.Execute(w,ChooseText())
+  t.Execute(w,chooseText())
 }
