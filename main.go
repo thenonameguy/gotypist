@@ -24,6 +24,7 @@ func main() {
   serveFile("/scripts.js","web/scripts.js")
   serveFile("/scripts2.js","web/scripts2.js")
   serveFile("/style.css","web/style.css")
+  serveFile("/bg.png","web/bg.png")
   server:=NewServer("/socket")
   go server.Listen()
 	err := http.ListenAndServe(port, nil)
