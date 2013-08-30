@@ -1,5 +1,7 @@
 var w = window,
-	d = document;
+	d = document,
+feed = d.getElementById("feed-text"),
+type = d.getElementById("typer-input");
 
 function newEvent(element, what, callback){
 	if (element.attachEvent){
@@ -10,11 +12,7 @@ function newEvent(element, what, callback){
 	}
 }
 
-newEvent(w, "load", init_scripts);
-
 function init_scripts(){
-	var feed = d.getElementById("feed-text");
-	var type = d.getElementById("typer-input");
 	var feed_text_arr = feed.innerHTML.split(" ");
 	var current_word = 0;
 	feed.innerHTML = feed_text_arr.slice(current_word,current_word + 6).join(" ");
@@ -42,7 +40,13 @@ function init_scripts(){
 	function end(){
 		feed.innerHTML = "You win!";
 	}
-	
 	newEvent(type, "keyup", check_error);
 	
+}
+
+function handleMsg(msg){
+  if (msg.type=="text"){
+    feed.innerHTML=msg.body;
+    init_scripts();
+  }
 }

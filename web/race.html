@@ -3,14 +3,13 @@
 	<head>
 		<title>GoTypist</title>
 		<meta charset="utf-8" />
-		<script type="text/javascript" src="scripts2.js"></script>
 		<link type="text/css" href="style.css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="wrapper">
 			 <div id="feed-wrapper">
 				<img src="bg.png"/>
-        <div id="feed-text">{{.}}</div>
+        <div id="feed-text">waiting for race to start</div>
 				<input type="text" id="typer-input" tabindex="1" autofocus />
 			 </div>
 		</div>
@@ -19,5 +18,10 @@
 			 <div id="sharing">facebook, gplus, foo</div>
      </div>
    </div>
+   <script>
+    var socket=new WebSocket("ws://localhost:8080/socket?id={{.}}");
+    socket.onmessage=function(msg){ handleMsg(JSON.parse(msg.data));};
+   </script>
+		<script type="text/javascript" src="scripts2.js"></script>
 	</body>
 </html>
