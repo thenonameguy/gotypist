@@ -19,7 +19,7 @@ func main() {
 	flag.StringVar(&port, "port", ":8080", "serving port")
 	flag.Parse()
 	fmt.Println("Listening on port", port)
-  http.HandleFunc("/index.html",IndexHandler)
+  http.HandleFunc("/",IndexHandler)
 	http.HandleFunc("/race", RaceHandler)
   serveFile("/scripts.js","web/scripts.js")
   serveFile("/scripts2.js","web/scripts2.js")
