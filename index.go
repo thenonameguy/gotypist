@@ -9,17 +9,12 @@ import(
   "log"
 )
 
-type IndexInfo struct{
-  RaceID string
-}
-
 func IndexHandler(w http.ResponseWriter,r *http.Request){
   t,err:=template.ParseFiles("web/index.html")
   if err!=nil{
     log.Fatal("Failed to parse file:",err)
   }
-  info:=IndexInfo{generateRaceID()}
-  t.Execute(w,info)
+  t.Execute(w,generateRaceID())
 }
 
 func generateRaceID() string{
