@@ -57,6 +57,7 @@ body {
 
 	#footer #arrow {
 		color: #ddd;
+    margin-top:-10px;
 		font: bold 60px/38px Arial, Tahoma, Verdana;
 		text-align: center;
 	}

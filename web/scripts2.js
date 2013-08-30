@@ -34,7 +34,7 @@ function init_scripts(){
 				type.style.background = "#fff";
 			}
 			else {
-				type.style.background = "#fbb";
+				type.style.background = "#e74c3c";
 			}
 		}
 	}
