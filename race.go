@@ -9,6 +9,41 @@ import (
 	"net/http"
 )
 
+type Race struct{
+  txt string
+  started bool
+	clients   map[int]*Client
+	addCh     chan *Client
+	delCh     chan *Client
+	sendAllCh chan *Message
+}
+
+func NewRace() *Race{
+	clients := make(map[int]*Client)
+	addCh := make(chan *Client)
+	delCh := make(chan *Client)
+	sendAllCh := make(chan *Message)
+  return &Race{chooseText(),false,clients,addCh,delCh,sendAllCh}
+}
+
+func (r *Race) Add(c *Client) {
+	r.addCh <- c
+}
+
+func (r *Race) Del(c *Client) {
+	r.delCh <- c
+}
+
+func (r *Race) SendAll(msg *Message) {
+	r.sendAllCh <- msg
+}
+
+func (r *Race) sendAll(msg *Message) {
+	for _, c := range r.clients {
+		c.Write(msg)
+	}
+}
+
 func chooseText() string {
 	files, _ := ioutil.ReadDir("txts")
 	content, err := ioutil.ReadFile("txts/" + files[rand.Int31n(int32(len(files)))].Name())
@@ -37,5 +72,5 @@ func RaceHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal("Failed to parse file:", err)
 	}
-	t.Execute(w, chooseText())
+	t.Execute(w,raceid)
 }

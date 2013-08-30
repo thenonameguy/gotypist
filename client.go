@@ -6,22 +6,19 @@ import (
 )
 
 const bufferSize = 100
-
 var maxId int = 0
 
 type Client struct {
 	id     int
 	ws     *websocket.Conn
-	server *Server
+	race   *Race
 	ch     chan *Message
-	doneCh chan bool
 }
 
-func NewClient(ws *websocket.Conn, server *Server) *Client {
+func NewClient(ws *websocket.Conn, race *Race) *Client {
 	maxId++
 	ch := make(chan *Message, bufferSize)
-	doneCh := make(chan bool)
-	return &Client{maxId, ws, server, ch, doneCh}
+	return &Client{maxId, ws, race, ch}
 }
 
 func (c *Client) Conn() *websocket.Conn {
@@ -32,13 +29,9 @@ func (c *Client) Write(msg *Message) {
 	select {
 	case c.ch <- msg:
 	default:
-		c.server.Del(c)
+		c.race.Del(c)
 		log.Println("client", c.id, "disconnected")
 	}
-}
-
-func (c *Client) Done() {
-	c.doneCh <- true
 }
 
 func (c *Client) Listen() {
@@ -64,7 +57,7 @@ func (c *Client) listenRead() {
 			if err != nil {
 				log.Println("error", err)
 			}
-			c.server.SendAll(&msg)
+			c.race.SendAll(&msg)
 		}
 	}
 }

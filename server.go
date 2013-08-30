@@ -8,52 +8,28 @@ import (
 
 type Server struct {
 	pattern   string
-	messages  []*Message
-	clients   map[int]*Client
-	addCh     chan *Client
-	delCh     chan *Client
-	sendAllCh chan *Message
-	doneCh    chan bool
+  races     map[string]*Race
 }
 
 func NewServer(pattern string) *Server {
-	messages := []*Message{}
-	clients := make(map[int]*Client)
-	addCh := make(chan *Client)
-	delCh := make(chan *Client)
-	sendAllCh := make(chan *Message)
-	doneCh := make(chan bool)
+	races := make(map[string]*Race)
 
 	return &Server{
 		pattern,
-		messages,
-		clients,
-		addCh,
-		delCh,
-		sendAllCh,
-		doneCh,
+    races,
 	}
 }
 
-func (s *Server) Add(c *Client) {
-	s.addCh <- c
-}
-
-func (s *Server) Del(c *Client) {
-	s.delCh <- c
-}
-
-func (s *Server) SendAll(msg *Message) {
-	s.sendAllCh <- msg
-}
-
-func (s *Server) Done() {
-	s.doneCh <- true
-}
-
-func (s *Server) sendAll(msg *Message) {
-	for _, c := range s.clients {
-		c.Write(msg)
+func (r *Race) RaceSocketHandler(){
+	for {
+		select {
+		case c := <-r.addCh:
+			r.clients[c.id] = c
+		case c := <-r.delCh:
+			delete(r.clients, c.id)
+		case msg := <-r.sendAllCh:
+			r.sendAll(msg)
+		}
 	}
 }
 
@@ -61,22 +37,19 @@ func (s *Server) Listen() {
 	log.Println("Server listening...")
 	onConnected := func(ws *websocket.Conn) {
 		defer ws.Close()
-		client := NewClient(ws, s)
-		s.Add(client)
+    raceid,err:=getRaceID(ws.Request())
+    if err!=nil{
+      websocket.JSON.Send(ws,&Message{"error","wrong url, no GET iD"})
+    }
+    if _,ok:=s.races[raceid];!ok{
+      s.races[raceid]=NewRace()
+      log.Println("Created race: ",raceid)
+      go s.races[raceid].RaceSocketHandler()
+    }
+		client := NewClient(ws, s.races[raceid])
+    s.races[raceid].Add(client)
+    log.Println("Client",client.id,"connected to race",raceid)
 		client.Listen()
 	}
 	http.Handle(s.pattern, websocket.Handler(onConnected))
-	for {
-		select {
-		case c := <-s.addCh:
-			s.clients[c.id] = c
-		case c := <-s.delCh:
-			delete(s.clients, c.id)
-		case msg := <-s.sendAllCh:
-			s.messages = append(s.messages, msg)
-			s.sendAll(msg)
-		case <-s.doneCh:
-			return
-		}
-	}
 }
