@@ -59,6 +59,7 @@ func (c *Client) listenRead() {
 			if err != nil {
 				log.Println(c.id, "error", err)
 				c.race.Del(c)
+        return
 			}
 			log.Println(c.id, "got:", msg)
 			c.race.SendAll(&msg)
