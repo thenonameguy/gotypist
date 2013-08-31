@@ -49,6 +49,7 @@ function handleMsg(msg){
     feed.innerHTML=msg.body;
     init_scripts();
   }
+  console.log(msg);
 }
 
 function sendMsg(msg){
