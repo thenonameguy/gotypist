@@ -25,12 +25,12 @@ func (r *Race) RaceSocketHandler(){
 		select {
 		case c := <-r.addCh:
 			r.clients[c.id] = c
-      r.sendAll(&Message{"count",r.playerCount()})
+      r.sendAll(&Message{"count",r.playerCount(),c.id})
       log.Println("Client ID:",c.id,"connected to race ID:",r.id)
 		case c := <-r.delCh:
       log.Println(c.id,"disconnected from race ID:",r.id,". Remaining players:",len(r.clients)-1)
 			delete(r.clients, c.id)
-      r.sendAll(&Message{"count",r.playerCount()})
+      r.sendAll(&Message{"count",r.playerCount(),0})
       if(len(r.clients)==0){
         log.Println("No players left in race ID:",r.id,"! Deleting...")
         delete(r.server.races,r.id)
@@ -48,7 +48,7 @@ func (s *Server) Listen() {
 		defer ws.Close()
     raceid,err:=getRaceID(ws.Request())
     if err!=nil{
-      websocket.JSON.Send(ws,&Message{"error","wrong url, no GET iD"})
+      websocket.JSON.Send(ws,&Message{"error","wrong url, no GET iD",0})
     }
     if _,created:=s.races[raceid];!created{
       s.races[raceid]=NewRace(s)
@@ -58,7 +58,7 @@ func (s *Server) Listen() {
     }
 		client := NewClient(ws, s.races[raceid])
     s.races[raceid].Add(client)
-    client.Write(&Message{"text",s.races[raceid].txt})
+    client.Write(&Message{"text",s.races[raceid].txt,0})
 		client.Listen()
 	}
 	http.Handle(s.pattern, websocket.Handler(onConnected))

@@ -74,7 +74,7 @@ func (c *Client) listenRead() {
         }
         if i>c.race.best{
           c.race.best=i
-          c.race.sendAll(&Message{"best",msg.Body})
+          c.race.sendAll(&Message{"best",msg.Body,c.id})
         }
       }
 		}
