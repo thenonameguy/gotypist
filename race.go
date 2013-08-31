@@ -14,14 +14,14 @@ type Race struct{
   id string
   started bool
   server    *Server
-	clients   map[int]*Client
+	clients   map[uint64]*Client
 	addCh     chan *Client
 	delCh     chan *Client
 	sendAllCh chan *Message
 }
 
 func NewRace(s *Server) *Race{
-	clients := make(map[int]*Client)
+	clients := make(map[uint64]*Client)
 	addCh := make(chan *Client)
 	delCh := make(chan *Client)
 	sendAllCh := make(chan *Message)

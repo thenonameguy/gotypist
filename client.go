@@ -7,10 +7,10 @@ import (
 
 const bufferSize = 100
 
-var maxId int = 0
+var maxId uint64 = 0
 
 type Client struct {
-	id   int
+	id   uint64
 	ws   *websocket.Conn
 	race *Race
 	ch   chan *Message
