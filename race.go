@@ -11,19 +11,21 @@ import (
 
 type Race struct{
   txt string
+  id string
   started bool
+  server    *Server
 	clients   map[int]*Client
 	addCh     chan *Client
 	delCh     chan *Client
 	sendAllCh chan *Message
 }
 
-func NewRace() *Race{
+func NewRace(s *Server) *Race{
 	clients := make(map[int]*Client)
 	addCh := make(chan *Client)
 	delCh := make(chan *Client)
 	sendAllCh := make(chan *Message)
-  return &Race{chooseText(),false,clients,addCh,delCh,sendAllCh}
+  return &Race{chooseText(),"",false,s,clients,addCh,delCh,sendAllCh}
 }
 
 func (r *Race) Add(c *Client) {
@@ -62,7 +64,6 @@ func getRaceID(r *http.Request) (string, error) {
 }
 func RaceHandler(w http.ResponseWriter, r *http.Request) {
 	raceid, err := getRaceID(r)
-	_ = raceid
 	if err != nil {
 		log.Println(err)
 		w.Write([]byte("Race 404'd, go back"))

@@ -26,7 +26,13 @@ func (r *Race) RaceSocketHandler(){
 		case c := <-r.addCh:
 			r.clients[c.id] = c
 		case c := <-r.delCh:
+      log.Println(c.id,"disconnected from race id:",r.id,". Remaining players:",len(r.clients)-1)
 			delete(r.clients, c.id)
+      if(len(r.clients)==0){
+        log.Println("No players left in race",r.id,"! Deleting...")
+        delete(r.server.races,r.id)
+        return
+      } 
 		case msg := <-r.sendAllCh:
 			r.sendAll(msg)
 		}
@@ -41,9 +47,10 @@ func (s *Server) Listen() {
     if err!=nil{
       websocket.JSON.Send(ws,&Message{"error","wrong url, no GET iD"})
     }
-    if _,ok:=s.races[raceid];!ok{
-      s.races[raceid]=NewRace()
+    if _,created:=s.races[raceid];!created{
+      s.races[raceid]=NewRace(s)
       log.Println("Created race: ",raceid)
+      s.races[raceid].id=raceid
       go s.races[raceid].RaceSocketHandler()
     }
 		client := NewClient(ws, s.races[raceid])

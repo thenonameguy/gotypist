@@ -6,13 +6,14 @@ import (
 )
 
 const bufferSize = 100
+
 var maxId int = 0
 
 type Client struct {
-	id     int
-	ws     *websocket.Conn
-	race   *Race
-	ch     chan *Message
+	id   int
+	ws   *websocket.Conn
+	race *Race
+	ch   chan *Message
 }
 
 func NewClient(ws *websocket.Conn, race *Race) *Client {
@@ -44,7 +45,7 @@ func (c *Client) listenWrite() {
 		select {
 		case msg := <-c.ch:
 			websocket.JSON.Send(c.ws, msg)
-      log.Println("sending to",c.id,":",msg)
+			log.Println("sending to", c.id, ":", msg)
 		}
 	}
 }
@@ -56,9 +57,10 @@ func (c *Client) listenRead() {
 			var msg Message
 			err := websocket.JSON.Receive(c.ws, &msg)
 			if err != nil {
-				log.Println(c.id,"error", err)
+				log.Println(c.id, "error", err)
+				c.race.Del(c)
 			}
-      log.Println(c.id,"got:",msg)
+			log.Println(c.id, "got:", msg)
 			c.race.SendAll(&msg)
 		}
 	}
