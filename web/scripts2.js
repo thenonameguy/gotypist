@@ -50,3 +50,7 @@ function handleMsg(msg){
     init_scripts();
   }
 }
+
+function sendMsg(msg){
+  socket.send(JSON.stringify(msg));
+}
