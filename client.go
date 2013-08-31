@@ -31,7 +31,7 @@ func (c *Client) Write(msg *Message) {
 	case c.ch <- msg:
 	default:
 		c.race.Del(c)
-		log.Println("client", c.id, "disconnected")
+		log.Println("Client", c.id, "disconnected")
 	}
 }
 
@@ -45,7 +45,7 @@ func (c *Client) listenWrite() {
 		select {
 		case msg := <-c.ch:
 			websocket.JSON.Send(c.ws, msg)
-			log.Println("sending to", c.id, ":", msg)
+			log.Println("Sending to", c.id, ":", msg)
 		}
 	}
 }
@@ -55,12 +55,14 @@ func (c *Client) listenRead() {
 		select {
 		default:
 			var msg Message
-			err := websocket.JSON.Receive(c.ws, &msg)
-			if err != nil {
-				log.Println(c.id, "error", err)
-				c.race.Del(c)
+			if err := websocket.JSON.Receive(c.ws, &msg);err!=nil{
+        if err.Error()=="EOF"{
+          c.race.Del(c)
+          return
+        }
+        log.Println("Unhandled error:",err)
         return
-			}
+      }
 			log.Println(c.id, "got:", msg)
 			c.race.SendAll(&msg)
 		}

@@ -25,11 +25,13 @@ func (r *Race) RaceSocketHandler(){
 		select {
 		case c := <-r.addCh:
 			r.clients[c.id] = c
+      r.sendAll(&Message{"join",string(c.id)})
+      log.Println("Client ID:",c.id,"connected to race ID:",r.id)
 		case c := <-r.delCh:
-      log.Println(c.id,"disconnected from race id:",r.id,". Remaining players:",len(r.clients)-1)
+      log.Println(c.id,"disconnected from race ID:",r.id,". Remaining players:",len(r.clients)-1)
 			delete(r.clients, c.id)
       if(len(r.clients)==0){
-        log.Println("No players left in race",r.id,"! Deleting...")
+        log.Println("No players left in race ID:",r.id,"! Deleting...")
         delete(r.server.races,r.id)
         return
       } 
@@ -49,13 +51,12 @@ func (s *Server) Listen() {
     }
     if _,created:=s.races[raceid];!created{
       s.races[raceid]=NewRace(s)
-      log.Println("Created race: ",raceid)
+      log.Println("Created race:",raceid)
       s.races[raceid].id=raceid
       go s.races[raceid].RaceSocketHandler()
     }
 		client := NewClient(ws, s.races[raceid])
     s.races[raceid].Add(client)
-    log.Println("Client",client.id,"connected to race",raceid)
     client.Write(&Message{"text",s.races[raceid].txt})
 		client.Listen()
 	}
