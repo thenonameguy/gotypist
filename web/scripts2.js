@@ -1,6 +1,8 @@
 var w = window,
 	d = document,
 feed = d.getElementById("feed-text"),
+sharing = d.getElementById("sharing"),
+racercount=d.getElementById("racercount"),
 type = d.getElementById("typer-input");
 
 function newEvent(element, what, callback){
@@ -27,6 +29,7 @@ function init_scripts(){
 					return;
 				}
 				++current_word;
+        sendMsg({type:"word",body:current_word.toString()});
 				feed.innerHTML = feed_text_arr.slice(current_word,current_word + 6).join(" ");
 				type.value = "";
 				type.style.background = "#fff";
@@ -45,9 +48,16 @@ function init_scripts(){
 }
 
 function handleMsg(msg){
-  if (msg.type=="text"){
-    feed.innerHTML=msg.body;
-    init_scripts();
+  switch (msg.type)
+  {
+    case "text":
+      feed.innerHTML=msg.body;
+      init_scripts();
+      break;
+    case "count":
+      racercount.innerHTML=msg.body;
+      break;
+      
   }
   console.log(msg);
 }

@@ -25,11 +25,12 @@ func (r *Race) RaceSocketHandler(){
 		select {
 		case c := <-r.addCh:
 			r.clients[c.id] = c
-      r.sendAll(&Message{"join",string(c.id)})
+      r.sendAll(&Message{"count",r.playerCount()})
       log.Println("Client ID:",c.id,"connected to race ID:",r.id)
 		case c := <-r.delCh:
       log.Println(c.id,"disconnected from race ID:",r.id,". Remaining players:",len(r.clients)-1)
 			delete(r.clients, c.id)
+      r.sendAll(&Message{"count",r.playerCount()})
       if(len(r.clients)==0){
         log.Println("No players left in race ID:",r.id,"! Deleting...")
         delete(r.server.races,r.id)

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+  "strconv"
 	"net/http"
 )
 
@@ -44,6 +45,10 @@ func (r *Race) sendAll(msg *Message) {
 	for _, c := range r.clients {
 		c.Write(msg)
 	}
+}
+
+func (r *Race) playerCount() string{
+  return strconv.Itoa(len(r.clients))
 }
 
 func chooseText() string {
