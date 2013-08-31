@@ -3,6 +3,7 @@ package main
 import (
 	"code.google.com/p/go.net/websocket"
 	"log"
+  "strconv"
 )
 
 const bufferSize = 100
@@ -64,7 +65,18 @@ func (c *Client) listenRead() {
         return
       }
 			log.Println(c.id, "got:", msg)
-			c.race.SendAll(&msg)
+
+      if msg.Type=="word"{
+        i,err:=strconv.Atoi(msg.Body)
+        if err!=nil{
+          log.Println(err)
+          continue
+        }
+        if i>c.race.best{
+          c.race.best=i
+          c.race.sendAll(&Message{"best",msg.Body})
+        }
+      }
 		}
 	}
 }

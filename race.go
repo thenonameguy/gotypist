@@ -14,6 +14,7 @@ type Race struct{
   txt string
   id string
   started bool
+  best int
   server    *Server
 	clients   map[uint64]*Client
 	addCh     chan *Client
@@ -26,7 +27,7 @@ func NewRace(s *Server) *Race{
 	addCh := make(chan *Client)
 	delCh := make(chan *Client)
 	sendAllCh := make(chan *Message)
-  return &Race{chooseText(),"",false,s,clients,addCh,delCh,sendAllCh}
+  return &Race{chooseText(),"",false,0,s,clients,addCh,delCh,sendAllCh}
 }
 
 func (r *Race) Add(c *Client) {
@@ -55,14 +56,14 @@ func chooseText() string {
 	files, _ := ioutil.ReadDir("txts")
 	content, err := ioutil.ReadFile("txts/" + files[rand.Int31n(int32(len(files)))].Name())
 	if err != nil {
-		log.Println("txt error", err)
+    log.Println("Txt error:", err)
 	}
 	return string(content)
 }
 
 func getRaceID(r *http.Request) (string, error) {
 	if raceid := r.FormValue("id"); raceid == "" {
-		return "", errors.New("race: no id got from GET request")
+		return "", errors.New("No ID got from GET request")
 	} else {
 		return raceid, nil
 	}
